@@ -24,9 +24,7 @@ For using this template we have to update following values in  jenkinsfile:
 
 3. Jenkins pipeline for backup is utilizing the Apigee Command Line Interface (Apigeecli) to export the identified Apigee resources. Apigeecli allows to interact with the Apigee API and export configurations and definitions.
 
-4. Jenkins Pipeline for backup has a stage for cleaning the backup data of a month ago from Github Repository. Regular cleanup ensures that only relevant and recent backup files are retained.
-
-5. When this pipeline will run and then it will create a following type of directory structure here in this repository and will store backup data in this:
+4. When this pipeline will run and then it will create a following type of directory structure here in this repository and will store backup data in this:
 
 `<APIGEE_ORG_NAME> > <DATE_OF_BACKUP> > sharedflows > <sharedflows_zip_bundles>`
 
