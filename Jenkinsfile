@@ -86,51 +86,6 @@ pipeline {
                 }
             }
         }
-           stage("Cleanup data of month ago") {
-                steps {
-                    script {
-                    def currentDate = new Date()
-                    def thirtyDaysAgo = new Date() - 30
-                      
-                    sh "git config --global user.name '<GITHUB_USER_NAME>'"
-                    sh "git config --global user.email '<GITHUB_USER_EMAIL>'"
-
-                    def workspace = env.WORKSPACE
-                    def dirsToDelete = []
-
-                    def dirList = sh(script: "ls -d <APIGEE_ORG_NAME>/*", returnStdout: true).trim().split("\n")
-                    dirList.each { dir ->
-                    def dirDate = dir.replaceAll(".*<APIGEE_ORG_NAME>/", "")
-                    def sdf = new SimpleDateFormat("dd-MM-yyyy")
-                    try {
-                        def dirTimestamp = sdf.parse(dirDate).time
-
-                        if (dirTimestamp <= thirtyDaysAgo.time) {
-                        dirsToDelete.add(dir)
-                        }
-                    } catch (java.text.ParseException e) {
-                    }
-                }
-
-                    dirsToDelete.each { dir ->
-                    sh "rm -rf ${dir}"
-                    }
-
-                    sh "git add -A" 
-                    def changes = sh(script: "git status --porcelain", returnStdout: true).trim()
-                    if (changes) {
-                        sh "git commit -m 'Cleanup data Jenkins Pipeline'"
-                        withCredentials([gitUsernamePassword(credentialsId: "${GITHUB_CREDS}", gitToolName: 'Default')]) {
-                        sh "git push -u origin main"
-                    }
-                    } else {
-                        echo "No changes in last one month to commit. Skipping git push."
-                    }
-                }
-            }
-        }
-    }
-
     post {
         always {
             deleteDir()
